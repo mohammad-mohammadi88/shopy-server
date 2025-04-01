@@ -11,18 +11,19 @@ const getProductSchema = yup.object({
   query : yup.object({
       page : yup.number(),
       per_page : yup.number(),
-      category: yup.string()
+      category: yup.string(),
+      productId: yup.string(),
   })
 });
 
 /* GET Products listing. */
 router.get('/' , validate(getProductSchema), async (req, res, next) => {
   try {
-      const { page=1 , per_page=10, category } = req.query;
+      const { page=1 , per_page=10, category,productId } = req.query;
       let data;
       let total_page;
-      if(category) {
-        data = await productRepo.getWithSameCategoryWithPaginate(category,page,per_page)
+      if(category && productId) {
+        data = await productRepo.getWithSameCategoryWithPaginate(category,page,per_page,productId)
         total_page = Math.ceil( await productRepo.getSameCategoryCount(category) / per_page)
       } else {
         data = await productRepo.getWithPaginate(

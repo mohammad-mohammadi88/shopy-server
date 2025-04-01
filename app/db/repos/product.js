@@ -93,9 +93,9 @@ class Product {
             });
         });
     }
-    getSameCategoryCount(category) {
+    getSameCategoryCount(category,productId) {
         return new Promise((resolve , reject) => {
-            db.get(`SELECT COUNT(*) as total_products FROM products WHERE category = ?`,[category] , function(err , product) {
+            db.get(`SELECT COUNT(*) as total_products FROM products WHERE category = ? AND NOT id = ?`,[category,productId ] , function(err , product) {
                 if(err) return reject(err);
                 
                 resolve(product?.total_products);
