@@ -58,11 +58,12 @@ class Product {
             });
         });
     }
-    getWithSameCategoryWithPaginate(category, page = 1 , per_page = 1 ) {
+    async getWithSameCategoryWithPaginate(page = 1 , per_page = 1,productId) {
+        const {category} = await this.findBy('id',productId)
         let offset = (page - 1) * per_page;
 
         return new Promise((resolve , reject) => {
-            db.all(`SELECT * FROM products WHERE category = ? LIMIT ?, ? `, [category, offset , per_page] , function(err , products) {
+            db.all(`SELECT * FROM products WHERE category = ? AND NOT id = ? LIMIT ?, ? `, [category,productId, offset , per_page] , function(err , products) {
                 if(err) return reject(err);
     
                 resolve(products);
@@ -93,7 +94,8 @@ class Product {
             });
         });
     }
-    getSameCategoryCount(category,productId) {
+    async getSameCategoryCount(productId) {
+        const {category} = await this.findBy('id',productId)
         return new Promise((resolve , reject) => {
             db.get(`SELECT COUNT(*) as total_products FROM products WHERE category = ? AND NOT id = ?`,[category,productId ] , function(err , product) {
                 if(err) return reject(err);

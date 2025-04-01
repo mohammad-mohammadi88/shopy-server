@@ -11,7 +11,6 @@ const getProductSchema = yup.object({
   query : yup.object({
       page : yup.number(),
       per_page : yup.number(),
-      category: yup.string(),
       productId: yup.string(),
   })
 });
@@ -19,12 +18,12 @@ const getProductSchema = yup.object({
 /* GET Products listing. */
 router.get('/' , validate(getProductSchema), async (req, res, next) => {
   try {
-      const { page=1 , per_page=10, category,productId } = req.query;
+      const { page=1 , per_page=10,productId } = req.query;
       let data;
       let total_page;
-      if(category && productId) {
-        data = await productRepo.getWithSameCategoryWithPaginate(category,page,per_page,productId)
-        total_page = Math.ceil( await productRepo.getSameCategoryCount(category) / per_page)
+      if(productId) {
+        data = await productRepo.getWithSameCategoryWithPaginate(page,per_page,productId)
+        total_page = Math.ceil( await productRepo.getSameCategoryCount(productId) / per_page)
       } else {
         data = await productRepo.getWithPaginate(
           page,
