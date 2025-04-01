@@ -58,6 +58,17 @@ class Product {
             });
         });
     }
+    getWithSameCategoryWithPaginate(category, page = 1 , per_page = 1 ) {
+        let offset = (page - 1) * per_page;
+
+        return new Promise((resolve , reject) => {
+            db.all(`SELECT * FROM products WHERE category = ? LIMIT ?, ? `, [category, offset , per_page] , function(err , products) {
+                if(err) return reject(err);
+    
+                resolve(products);
+            });
+        });
+    }
     async getProductsIdWithPaginate(page = 1 , per_page = 1 ) {
         let offset = (page - 1) * per_page;
 
@@ -76,6 +87,15 @@ class Product {
     count() {
         return new Promise((resolve , reject) => {
             db.get(`SELECT COUNT(*) as total_products FROM products` , function(err , product) {
+                if(err) return reject(err);
+                
+                resolve(product?.total_products);
+            });
+        });
+    }
+    getSameCategoryCount(category) {
+        return new Promise((resolve , reject) => {
+            db.get(`SELECT COUNT(*) as total_products FROM products WHERE category = ?`,[category] , function(err , product) {
                 if(err) return reject(err);
                 
                 resolve(product?.total_products);

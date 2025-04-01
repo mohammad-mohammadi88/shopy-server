@@ -11,21 +11,26 @@ const getProductSchema = yup.object({
   query : yup.object({
       page : yup.number(),
       per_page : yup.number(),
+      category: yup.string()
   })
 });
 
 /* GET Products listing. */
 router.get('/' , validate(getProductSchema), async (req, res, next) => {
   try {
-      const { page=1 , per_page=10 } = req.query;
-
-      let data = await productRepo.getWithPaginate(
-        page,
-        per_page,
-      );
-
-      console.log(await productRepo.count())
-      const total_page = Math.ceil( await productRepo.count() / per_page )
+      const { page=1 , per_page=10, category } = req.query;
+      let data;
+      let total_page;
+      if(category) {
+        data = await productRepo.getWithSameCategoryWithPaginate(category,page,per_page)
+        total_page = Math.ceil( await productRepo.getSameCategoryCount(category) / per_page)
+      } else {
+        data = await productRepo.getWithPaginate(
+          page,
+          per_page,
+        );
+        total_page = Math.ceil( await productRepo.count() / per_page )
+      }
 
       return res.status(200).json({ 
         data,
@@ -37,6 +42,7 @@ router.get('/' , validate(getProductSchema), async (req, res, next) => {
     next(err);
   }
 });
+
 
 // Get products id
 router.get('/productsId' , validate(getProductSchema), async (req, res, next) => {
