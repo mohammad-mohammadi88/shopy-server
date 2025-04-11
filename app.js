@@ -13,7 +13,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({
-  origin: 'https://shopy-seven-brown.vercel.app',
+  origin: 'https://shopy-js.vercel.app',
   credentials : true
 }))
 app.use(cookieParser());
